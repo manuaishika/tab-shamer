@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tab Shamer Icon Generator</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      background: white;
+    }
+    .container {
+      text-align: center;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Tab Shamer Icon Generator</h2>
+    <canvas id="icon" width="128" height="128"></canvas>
+    <br>
+    <button onclick="downloadIcon()">Download icon.png (128x128)</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('icon');
+    const ctx = canvas.getContext('2d');
+    
+    // Draw a simple "😒" emoji-style icon
+    // Background
+    ctx.fillStyle = '#4A90E2';
+    ctx.fillRect(0, 0, 128, 128);
+    
+    // Face circle
+    ctx.fillStyle = '#FFDBAC';
+    ctx.beginPath();
+    ctx.arc(64, 64, 50, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Left eye
+    ctx.fillStyle = '#333';
+    ctx.beginPath();
+    ctx.arc(52, 58, 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Right eye  
+    ctx.beginPath();
+    ctx.arc(76, 58, 4, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Frown mouth
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(64, 75, 12, 0.2, Math.PI - 0.2);
+    ctx.stroke();
+    
+    // Eyebrows (slightly slanted for judgmental look)
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(45, 48);
+    ctx.lineTo(58, 52);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(70, 52);
+    ctx.lineTo(83, 48);
+    ctx.stroke();
+    
+    function downloadIcon() {
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'icon.png';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+  </script>
+</body>
+</html>
+
