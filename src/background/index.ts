@@ -1,4 +1,10 @@
-import { getSettings, setTabMeta, removeTabMeta, getAllTabMeta } from "~/shared/storage";
+import {
+  getSettings,
+  setTabMeta,
+  removeTabMeta,
+  getAllTabMeta,
+  getTabMeta,
+} from "~/shared/storage";
 import { getShameMessage, getAncientTabMessage, getTabAgeDays } from "~/shared/shameEngine";
 import type { AncientTab, Settings } from "~/shared/types";
 
@@ -6,6 +12,25 @@ import type { AncientTab, Settings } from "~/shared/types";
 let lastTabCountNotification = 0;
 let lastAncientTabNotification = 0;
 const NOTIFICATION_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
+let lastBadgeUpdate = 0;
+const BADGE_UPDATE_COOLDOWN_MS = 1500;
+
+function formatBadgeText(tabCount: number): string {
+  if (tabCount <= 0) return "";
+  if (tabCount > 99) return "99+";
+  return String(tabCount);
+}
+
+async function updateBadgeText() {
+  const now = Date.now();
+  if (now - lastBadgeUpdate < BADGE_UPDATE_COOLDOWN_MS) return;
+  lastBadgeUpdate = now;
+
+  const tabs = await chrome.tabs.query({});
+  chrome.action.setBadgeText({
+    text: formatBadgeText(tabs.length),
+  });
+}
 
 // Track tab creation time
 chrome.tabs.onCreated.addListener(async (tab: chrome.tabs.Tab) => {
@@ -14,11 +39,13 @@ chrome.tabs.onCreated.addListener(async (tab: chrome.tabs.Tab) => {
   await setTabMeta(tab.id, {
     openedAt: Date.now(),
   });
+  await updateBadgeText();
 });
 
 // Clean up when tabs are removed
 chrome.tabs.onRemoved.addListener(async (tabId: number) => {
   await removeTabMeta(tabId);
+  await updateBadgeText();
 });
 
 // Track tabs when they're updated (for tabs that existed before extension install)
@@ -26,8 +53,8 @@ chrome.tabs.onUpdated.addListener(async (tabId: number, changeInfo: chrome.tabs.
   if (changeInfo.status === "complete" && changeInfo.url) {
     // Check if we have metadata for this tab, if not, create it
     // This handles tabs that existed before the extension was installed
-    const meta = await chrome.storage.local.get(tabId.toString());
-    if (!meta[tabId.toString()]) {
+    const meta = await getTabMeta(tabId);
+    if (!meta) {
       await setTabMeta(tabId, {
         openedAt: Date.now(),
       });
@@ -135,9 +162,11 @@ chrome.alarms.onAlarm.addListener((alarm: chrome.alarms.Alarm) => {
 // Initial check on startup
 chrome.runtime.onStartup.addListener(() => {
   checkTabs();
+  updateBadgeText();
 });
 
 chrome.runtime.onInstalled.addListener(() => {
   checkTabs();
+  updateBadgeText();
 });
 

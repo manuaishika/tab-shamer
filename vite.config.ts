@@ -1,13 +1,13 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { webExtension } from "vite-plugin-web-extension";
+import webExtension from "vite-plugin-web-extension";
 import path from "path";
 
 export default defineConfig({
   plugins: [
     react(),
     webExtension({
-      manifest: "./src/manifest.ts",
+      manifest: "./public/manifest.json",
     }),
   ],
   resolve: {

@@ -58,7 +58,6 @@ export function getDefaultSettings(): Settings {
     shameLevel: "firm",
     soundEnabled: false,
     shameAncientTabs: true,
-    alwaysAskBeforeClosing: true,
   };
 }
 

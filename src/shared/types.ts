@@ -8,7 +8,6 @@ export type Settings = {
   shameLevel: "nice" | "firm" | "unhinged";
   soundEnabled: boolean;
   shameAncientTabs: boolean;
-  alwaysAskBeforeClosing: boolean; // Always true, but stored for clarity
 };
 
 export type AncientTab = {

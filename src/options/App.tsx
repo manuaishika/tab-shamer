@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getSettings, setSettings, getAllTabMeta } from "~/shared/storage";
 import { getTabAgeDays, getDefaultSettings } from "~/shared/shameEngine";
 import type { Settings, AncientTab } from "~/shared/types";
-import { DEFAULT_TAB_LIMIT, MIN_AGE_LIMIT_DAYS, MAX_AGE_LIMIT_DAYS } from "~/shared/constants";
+import { MIN_AGE_LIMIT_DAYS, MAX_AGE_LIMIT_DAYS } from "~/shared/constants";
 
 export default function App() {
   const [settings, setSettingsState] = useState<Settings>(getDefaultSettings());
@@ -117,6 +117,7 @@ export default function App() {
                 min="5"
                 max="100"
                 value={settings.tabLimit}
+                aria-label="Tab limit"
                 onChange={(e) =>
                   handleSettingsChange({ tabLimit: parseInt(e.target.value) })
                 }
@@ -137,6 +138,7 @@ export default function App() {
                 min={MIN_AGE_LIMIT_DAYS}
                 max={MAX_AGE_LIMIT_DAYS}
                 value={settings.ageLimitDays}
+                aria-label="Ancient tab age in days"
                 onChange={(e) =>
                   handleSettingsChange({ ageLimitDays: parseInt(e.target.value) })
                 }
@@ -154,6 +156,7 @@ export default function App() {
               </label>
               <select
                 value={settings.shameLevel}
+                aria-label="Shame level"
                 onChange={(e) =>
                   handleSettingsChange({
                     shameLevel: e.target.value as Settings["shameLevel"],
@@ -191,9 +194,10 @@ export default function App() {
                     handleSettingsChange({ soundEnabled: e.target.checked })
                   }
                   className="rounded border-gray-300"
+                  disabled
                 />
                 <span className="text-sm text-gray-700">
-                  Sound effects (coming soon)
+                  Sound effects (not implemented yet)
                 </span>
               </label>
             </div>

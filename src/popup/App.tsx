@@ -8,7 +8,9 @@ export default function App() {
   const [tabCount, setTabCount] = useState(0);
   const [settings, setSettings] = useState<Settings>(getDefaultSettings());
   const [ancientTabs, setAncientTabs] = useState<AncientTab[]>([]);
+  const [oldestTabs, setOldestTabs] = useState<AncientTab[]>([]);
   const [loading, setLoading] = useState(true);
+  const [closingTabIds, setClosingTabIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     loadData();
@@ -27,6 +29,7 @@ export default function App() {
 
       // Find ancient tabs
       const ancient: AncientTab[] = [];
+      const oldestCandidates: AncientTab[] = [];
       for (const tab of tabs) {
         if (!tab.id || !tab.url || !tab.title) continue;
 
@@ -34,6 +37,14 @@ export default function App() {
         if (!meta) continue;
 
         const ageDays = getTabAgeDays(meta.openedAt);
+
+        oldestCandidates.push({
+          tabId: tab.id,
+          url: tab.url,
+          title: tab.title,
+          ageDays,
+        });
+
         if (ageDays >= currentSettings.ageLimitDays) {
           ancient.push({
             tabId: tab.id,
@@ -44,11 +55,34 @@ export default function App() {
         }
       }
 
+      // Oldest-first for a nicer mini-list.
+      oldestCandidates.sort((a, b) => b.ageDays - a.ageDays);
+      ancient.sort((a, b) => b.ageDays - a.ageDays);
+
       setAncientTabs(ancient);
+      setOldestTabs(oldestCandidates.slice(0, 5));
     } catch (error) {
       console.error("Failed to load data:", error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function closeTab(tabId: number) {
+    if (closingTabIds.has(tabId)) return;
+    setClosingTabIds((prev) => new Set(prev).add(tabId));
+    try {
+      await chrome.tabs.remove(tabId);
+    } catch (error) {
+      console.error("Failed to close tab:", error);
+    } finally {
+      setClosingTabIds((prev) => {
+        const next = new Set(prev);
+        next.delete(tabId);
+        return next;
+      });
+      setAncientTabs((prev) => prev.filter((t) => t.tabId !== tabId));
+      setOldestTabs((prev) => prev.filter((t) => t.tabId !== tabId));
     }
   }
 
@@ -76,6 +110,38 @@ export default function App() {
           </p>
           <p className="italic text-gray-700">{shameMessage}</p>
         </div>
+
+        {oldestTabs.length > 0 && (
+          <div className="mt-2 p-4 bg-white border border-gray-200 rounded-lg shadow-sm space-y-3 text-left">
+            <p className="text-sm font-semibold text-gray-900">Oldest tabs</p>
+            <div className="space-y-2">
+              {oldestTabs.map((tab) => (
+                <div
+                  key={tab.tabId}
+                  className="flex items-center justify-between gap-2"
+                >
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-gray-900 truncate">
+                      {tab.title || tab.url}
+                    </p>
+                    <p className="text-[11px] text-gray-500">
+                      {tab.ageDays} day{tab.ageDays !== 1 ? "s" : ""} old
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => closeTab(tab.tabId)}
+                    disabled={closingTabIds.has(tab.tabId)}
+                    className="shrink-0 px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors disabled:opacity-60"
+                    aria-label={`Close tab: ${tab.title || tab.url}`}
+                    title="Close tab"
+                  >
+                    {closingTabIds.has(tab.tabId) ? "Closing..." : "Close"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {ancientTabs.length > 0 && settings.shameAncientTabs && (
           <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg space-y-3">
@@ -106,7 +172,7 @@ export default function App() {
         </div>
 
         <p className="text-xs text-gray-500 mt-4">
-          Tab Shamer will never close a tab without asking.
+          Close tabs right from this popup, or review everything in Options.
         </p>
       </div>
     </div>
