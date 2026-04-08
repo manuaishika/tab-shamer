@@ -95,16 +95,16 @@ export default function App() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-rose-400">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-rose-50 via-pink-50 to-violet-50 py-8">
       <div className="max-w-4xl mx-auto px-4 space-y-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h1 className="text-3xl font-bold mb-6">Tab Shamer Settings</h1>
+        <div className="bg-white/90 backdrop-blur rounded-3xl shadow-sm border border-rose-100 p-6">
+          <h1 className="text-3xl font-extrabold text-rose-500 mb-6">Tab Shamer Settings</h1>
 
           <div className="space-y-6">
             {/* Tab Limit */}
@@ -121,7 +121,7 @@ export default function App() {
                 onChange={(e) =>
                   handleSettingsChange({ tabLimit: parseInt(e.target.value) })
                 }
-                className="w-full"
+                className="w-full accent-rose-500"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Shame triggers when you exceed this many tabs
@@ -142,7 +142,7 @@ export default function App() {
                 onChange={(e) =>
                   handleSettingsChange({ ageLimitDays: parseInt(e.target.value) })
                 }
-                className="w-full"
+                className="w-full accent-rose-500"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Tabs older than this are considered "ancient"
@@ -162,7 +162,7 @@ export default function App() {
                     shameLevel: e.target.value as Settings["shameLevel"],
                   })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-rose-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-300"
               >
                 <option value="nice">Nice 🙂</option>
                 <option value="firm">Firm 😒</option>
@@ -179,7 +179,7 @@ export default function App() {
                   onChange={(e) =>
                     handleSettingsChange({ shameAncientTabs: e.target.checked })
                   }
-                  className="rounded border-gray-300"
+                  className="rounded-full border-rose-300 text-rose-500 focus:ring-rose-300"
                 />
                 <span className="text-sm text-gray-700">
                   Shame me about ancient tabs
@@ -193,7 +193,7 @@ export default function App() {
                   onChange={(e) =>
                     handleSettingsChange({ soundEnabled: e.target.checked })
                   }
-                  className="rounded border-gray-300"
+                  className="rounded-full border-rose-300 text-rose-500 focus:ring-rose-300"
                   disabled
                 />
                 <span className="text-sm text-gray-700">
@@ -206,7 +206,7 @@ export default function App() {
 
         {/* Ancient Tabs Review */}
         {ancientTabs.length > 0 && settings.shameAncientTabs && (
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white/90 backdrop-blur rounded-3xl shadow-sm border border-rose-100 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">
                 Ancient Tabs ({ancientTabs.length})
@@ -214,14 +214,14 @@ export default function App() {
               <div className="space-x-2">
                 <button
                   onClick={handleSelectAll}
-                  className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded transition-colors"
+                  className="px-3 py-1 text-sm bg-rose-100 hover:bg-rose-200 text-rose-800 rounded-full transition-colors"
                 >
                   {selectedTabs.size === ancientTabs.length ? "Deselect All" : "Select All"}
                 </button>
                 {selectedTabs.size > 0 && (
                   <button
                     onClick={handleCloseTabs}
-                    className="px-3 py-1 text-sm bg-red-600 text-white hover:bg-red-700 rounded transition-colors"
+                    className="px-3 py-1 text-sm bg-rose-500 text-white hover:bg-rose-600 rounded-full transition-colors"
                   >
                     Close Selected ({selectedTabs.size})
                   </button>
@@ -230,11 +230,11 @@ export default function App() {
             </div>
 
             {showCloseConfirm && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="font-semibold text-red-800 mb-2">
+              <div className="mb-4 p-4 bg-rose-50 border border-rose-200 rounded-2xl">
+                <p className="font-semibold text-rose-800 mb-2">
                   Are you sure you want to close {selectedTabs.size} tab{selectedTabs.size > 1 ? "s" : ""}?
                 </p>
-                <div className="text-sm text-red-700 mb-3 space-y-1">
+                <div className="text-sm text-rose-700 mb-3 space-y-1">
                   {ancientTabs
                     .filter((t) => selectedTabs.has(t.tabId))
                     .slice(0, 5)
@@ -242,7 +242,7 @@ export default function App() {
                       <div key={tab.tabId} className="flex items-center space-x-2">
                         <span>•</span>
                         <span className="truncate">{tab.title || tab.url}</span>
-                        <span className="text-red-600">({tab.ageDays} days)</span>
+                        <span className="text-rose-600">({tab.ageDays} days)</span>
                       </div>
                     ))}
                   {selectedTabs.size > 5 && (
@@ -252,13 +252,13 @@ export default function App() {
                 <div className="flex space-x-2">
                   <button
                     onClick={confirmCloseTabs}
-                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                    className="px-4 py-2 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors"
                   >
                     Yes, close selected tabs
                   </button>
                   <button
                     onClick={() => setShowCloseConfirm(false)}
-                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                    className="px-4 py-2 bg-rose-100 text-rose-800 rounded-full hover:bg-rose-200 transition-colors"
                   >
                     Cancel
                   </button>
@@ -270,24 +270,24 @@ export default function App() {
               {ancientTabs.map((tab) => (
                 <label
                   key={tab.tabId}
-                  className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded border border-gray-200 cursor-pointer"
+                  className="flex items-start space-x-3 p-3 hover:bg-rose-50 rounded-2xl border border-rose-100 cursor-pointer"
                 >
                   <input
                     type="checkbox"
                     checked={selectedTabs.has(tab.tabId)}
                     onChange={() => handleTabSelect(tab.tabId)}
-                    className="mt-1 rounded border-gray-300"
+                    className="mt-1 rounded-full border-rose-300 text-rose-500 focus:ring-rose-300"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-gray-900 truncate">
+                      <p className="text-sm font-medium text-rose-900 truncate">
                         {tab.title || "Untitled"}
                       </p>
-                      <span className="ml-2 text-xs text-red-600 font-semibold whitespace-nowrap">
+                      <span className="ml-2 text-xs text-rose-600 font-semibold whitespace-nowrap">
                         {tab.ageDays} day{tab.ageDays !== 1 ? "s" : ""}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 truncate">{tab.url}</p>
+                    <p className="text-xs text-rose-500 truncate">{tab.url}</p>
                   </div>
                 </label>
               ))}
@@ -302,13 +302,13 @@ export default function App() {
         )}
 
         {ancientTabs.length === 0 && (
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <p className="text-gray-500">No ancient tabs to review. Keep it up! ✨</p>
+          <div className="bg-white/90 backdrop-blur rounded-3xl shadow-sm border border-rose-100 p-6 text-center">
+            <p className="text-rose-500">No ancient tabs to review. Keep it up! ✨</p>
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <p className="text-xs text-gray-500 text-center">
+        <div className="bg-white/90 backdrop-blur rounded-3xl shadow-sm border border-rose-100 p-6">
+          <p className="text-xs text-rose-500 text-center">
             Tab Shamer will never close a tab without your explicit confirmation.
           </p>
         </div>
