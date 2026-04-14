@@ -1,4 +1,4 @@
-# 🚀 START HERE - 3 STEPS
+# use it before its on the app store
 
 ## 1. Install
 ```bash
